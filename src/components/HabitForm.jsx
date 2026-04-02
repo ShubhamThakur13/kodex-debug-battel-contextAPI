@@ -9,12 +9,12 @@ const HabitForm = () => {
   const onCommit = (values) => {
     const payload = {
       ...values,
-      id: crypto.randomUUID,
+      id: crypto.randomUUID(),
       completed: false,
     };
 
     addHabit(payload);
-    reset;
+    reset();
   };
 
   return (

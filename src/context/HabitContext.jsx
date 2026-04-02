@@ -5,17 +5,19 @@ const HabitContext = createContext();
 const getToday = () => new Date().toISOString().split("T")[1];
 
 export const HabitProvider = ({ children }) => {
-  const [habits, setHabits] = useState();
+  const [habits, setHabits] = useState([]);
   const [showAll, setShowAll] = useState(false);
 
   const addHabit = (habit) => {
     const newHabit = {
-      id: Date.now,
-      completedDates: null,
+      id: Date.now(),
+      completedDates: [],
       ...habit,
     };
 
     setHabits((prev) => [...prev, newHabit]);
+    console.log(habits);
+    
   };
 
   const toggleHabit = (id) => {
@@ -23,15 +25,15 @@ export const HabitProvider = ({ children }) => {
 
     setHabits((prev) =>
       prev.map((h) => {
-        if (h.id != id) return;
+        if (h.id != id) return h;
 
         const alreadyDone = h.completedDates.includes(today);
 
         return {
           ...h,
           completedDates: alreadyDone
-            ? h.completedDates.filter((d) => d === today)
-            : h.completedDates.push(today),
+            ? h.completedDates.filter((d) => d !== today)
+            : h.completedDates.push(...h.completedDates ,today),
         };
       }),
     );
@@ -60,7 +62,7 @@ export const HabitProvider = ({ children }) => {
   };
 
   const deleteHabit = (id) => {
-    setHabits((prev) => prev.filter((h) => h.id == id));
+    setHabits((prev) => prev.filter((h) => h.id !== id));
   };
 
   return (
@@ -81,4 +83,4 @@ export const HabitProvider = ({ children }) => {
   );
 };
 
-export const useHabit = () => useContext();
+export const useHabit = () => useContext(HabitContext);

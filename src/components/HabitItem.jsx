@@ -7,25 +7,33 @@ const HabitItem = ({ habit }) => {
   const [editing, setEditing] = useState(false);
   const [editData, setEditData] = useState(habit);
 
-  const today = new Date().toISOString().split("T")[1];
-  const isDoneToday = habit.completedDates.includes(today);
+  const today = new Date().toISOString().split("T")[0];
+
+  const isDoneToday = habit.completedDates?.includes(today);
 
   const handleSave = () => {
     updateHabit(habit.id, editData);
-    setEditing(true);
+    setEditing(false); 
   };
 
   return (
     <div>
       {editing ? (
-        <input
-          value={editData.name}
-          onChange={(e) => (editData.name = e.target.value)}
-        />
+        <div>
+          <input
+            value={editData.name}
+            onChange={(e) =>
+              setEditData({ ...editData, name: e.target.value })
+            }
+          />
+          <button onClick={handleSave}>Save</button>
+        </div>
       ) : (
         <div>
           <h3>{habit.name}</h3>
           <span>{getStreak(habit.completedDates)}</span>
+
+          <button onClick={() => setEditing(true)}>Edit</button>
 
           <button onClick={() => deleteHabit(habit.id)}>
             Delete
@@ -39,5 +47,4 @@ const HabitItem = ({ habit }) => {
     </div>
   );
 };
-
 export default HabitItem;

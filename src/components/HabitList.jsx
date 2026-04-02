@@ -3,31 +3,39 @@ import HabitItem from "./HabitItem";
 
 const HabitList = () => {
   const { habits, showAll, setShowAll } = useHabit();
+  
 
-  const today = new Date().toISOString().split("T")[1];
+const today = new Date().toISOString().split("T")[0];
 
-  const completedToday = habits.filter((h) =>
-    h.completedDates.includes(today),
-  ).length;
+const completedToday = habits?.filter(
+  (h) => Array.isArray(h.completedDates) && h.completedDates.includes(today)
+).length;
 
-  const progressPercent =
-    habits.length > 0 ? Math.round((completedToday * habits.length) * 100) : 0;
+const progressPercent =
+  habits?.length > 0
+    ? Math.round((completedToday / habits.length) * 100)
+    : 0;
 
-  const topCategory =
-    habits.reduce((acc, h) => {
-      acc[h.category] = (acc[h.category] || 0) + 1;
-      return acc;
-    }, {});
+const topCategory =
+  habits?.reduce((acc, h) => {
+    acc[h.category] = (acc[h.category] || 0) + 1;
+    return acc;
+  }, {}) || {};
 
-  const mainFocus = Object.keys(topCategory).reduce((a, b) =>
-    topCategory[a] < topCategory[b] ? a : b,
-  );
+const keys = Object.keys(topCategory);
 
-  if (habits.length === 0) {
-    return null;
-  }
+const mainFocus =
+  keys.length > 0
+    ? keys.reduce((a, b) =>
+        topCategory[a] < topCategory[b] ? a : b
+      )
+    : null;
 
-  const visibleHabits = showAll ? habits : habits.slice(3);
+if (!habits || habits.length === 0) {
+  return null;
+}
+
+const visibleHabits = showAll ? habits : habits.slice(0, 3);
 
   return (
     <div className="max-w-md mx-auto mt-6 px-4 pb-20">
